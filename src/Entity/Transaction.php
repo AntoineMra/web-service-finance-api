@@ -15,15 +15,19 @@ class Transaction
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['budget:read', 'budget:write'])]
     private ?string $label = null;
 
     #[ORM\Column]
+    #[Groups(['budget:read', 'budget:write'])]
     private ?int $amount = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Groups(['budget:read', 'budget:write'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['budget:read', 'budget:write'])]
     private ?string $type = null;
 
     #[ORM\ManyToOne(inversedBy: 'transactions')]

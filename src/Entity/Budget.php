@@ -2,14 +2,39 @@
 
 namespace App\Entity;
 
-use App\Repository\BudgetRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Transaction;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Enum\BudgetStatus;
+use App\Repository\BudgetRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Gedmo\Mapping\Annotation\Timestampable;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
-class Budget
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(),
+        new Delete(),
+        new Get(
+            name: 'transactions',
+            uriTemplate: '/places/{id}/transactions',
+            normalizationContext: ['groups' => ['budget_transactions:read']],
+            denormalizationContext: ['groups' => ['budget_transactions:write']]
+        ),
+        new GetCollection(),
+        new Post(),
+    ],
+    normalizationContext: ['groups' => ['budget:read']],
+    denormalizationContext: ['groups' => ['budget:write']]
+)] final class Budget
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,16 +42,29 @@ class Budget
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['budget:read', 'budget:write'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['budget:read', 'budget:write'])]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $status = null;
+    #[ORM\Column(length: 255, enumType: BudgetStatus::class, nullable: true)]
+    #[Groups(['budget:read', 'budget:write'])]
+    private ?BudgetStatus $status = null;
 
     #[ORM\OneToMany(mappedBy: 'budget', targetEntity: Transaction::class, orphanRemoval: true)]
+    #[Groups('budget:read')]
     private Collection $transactions;
+
+    /**
+     * @Timestampable(on="create")
+     */
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups('budget:read')]
+    private \DateTime $createdAt;
+
+
 
     public function __construct()
     {
@@ -52,7 +90,7 @@ class Budget
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->date;
+        return date_format($this->date, "mmYY");
     }
 
     public function setDate(\DateTimeInterface $date): self
@@ -95,12 +133,15 @@ class Budget
     public function removeTransaction(Transaction $transaction): self
     {
         if ($this->transactions->removeElement($transaction)) {
-            // set the owning side to null (unless already changed)
             if ($transaction->getBudget() === $this) {
                 $transaction->setBudget(null);
             }
         }
 
         return $this;
+    }
+    public function getCreatedAt(): \DateTime
+    {
+        return $this->createdAt;
     }
 }
