@@ -25,7 +25,7 @@ use Doctrine\Common\Collections\ArrayCollection;
         new Delete(),
         new Get(
             name: 'transactions',
-            uriTemplate: '/places/{id}/transactions',
+            uriTemplate: '/budgets/{id}/transactions',
             normalizationContext: ['groups' => ['budget_transactions:read']],
             denormalizationContext: ['groups' => ['budget_transactions:write']]
         ),
@@ -34,7 +34,7 @@ use Doctrine\Common\Collections\ArrayCollection;
     ],
     normalizationContext: ['groups' => ['budget:read']],
     denormalizationContext: ['groups' => ['budget:write']]
-)] final class Budget
+)] class Budget
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]

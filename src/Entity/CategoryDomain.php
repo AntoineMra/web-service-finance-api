@@ -19,11 +19,11 @@ class CategoryDomain
     private ?string $label = null;
 
     #[ORM\OneToMany(mappedBy: 'categoryDomain', targetEntity: Categorie::class, orphanRemoval: true)]
-    private Collection $caategories;
+    private Collection $categories;
 
     public function __construct()
     {
-        $this->caategories = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -46,27 +46,27 @@ class CategoryDomain
     /**
      * @return Collection<int, Categorie>
      */
-    public function getCaategories(): Collection
+    public function getCategories(): Collection
     {
-        return $this->caategories;
+        return $this->categories;
     }
 
-    public function addCaategory(Categorie $caategory): self
+    public function addCategory(Categorie $category): self
     {
-        if (!$this->caategories->contains($caategory)) {
-            $this->caategories->add($caategory);
-            $caategory->setCategoryDomain($this);
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+            $category->setCategoryDomain($this);
         }
 
         return $this;
     }
 
-    public function removeCaategory(Categorie $caategory): self
+    public function removeCategory(Categorie $category): self
     {
-        if ($this->caategories->removeElement($caategory)) {
+        if ($this->categories->removeElement($category)) {
             // set the owning side to null (unless already changed)
-            if ($caategory->getCategoryDomain() === $this) {
-                $caategory->setCategoryDomain(null);
+            if ($category->getCategoryDomain() === $this) {
+                $category->setCategoryDomain(null);
             }
         }
 
