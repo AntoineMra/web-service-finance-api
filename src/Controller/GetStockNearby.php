@@ -5,6 +5,7 @@ use App\Entity\Stocks;
 use App\Service\GoogleSearchService;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 
 #[AsController]
 class GetStockNearbyPublication extends AbstractController
@@ -18,13 +19,13 @@ class GetStockNearbyPublication extends AbstractController
         $this->googleSearchService = $googleSearchService;
     }
 
-    public function __invoke(Request $request): array
+    public function __invoke(Request $request): Response
     {
         $this->logger->warning('Passed to logger')
         $this->logger->info($request);
+        
+        // Google Search Parameters attended in the request must be passed in the service
 
-        $this->googleSearchService->getHappyMessage();
-        $stocks = new Stocks()
-        return $;
+        return $this->googleSearchService->getHappyMessage(); // Should Return a Response Object + Change name function
     }
 }
