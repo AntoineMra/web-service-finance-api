@@ -16,11 +16,14 @@ class GoogleSearchService
     public function executeSearchService(string $body): string
     {
         $options = [
-            'body' => $body, // Check if body is necessary in google documentatin
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
                 // Add API KEY + Query Params ?
+            ],
+            'query' => [
+                'token' => '...',
+                'name' => '...',
             ],
         ];
         // Add %env(url) get env ? sinon parametrer un argument dans serivce.yml
