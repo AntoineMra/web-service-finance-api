@@ -22,13 +22,13 @@ services:
 
     App\Service\GoogleSearchService:
         arguments:
-            $baseUrl: "%env(GOOGLE_API_KEY)%"
+            $baseUrl: "%env(GOOGLE_BASE_URL)%"
             $apiKey: "%env(GOOGLE_API_KEY)%"
 
     App\Service\StocksSearchService:
         arguments:
-            $baseUrl: "%env(FINNHUB_API_KEY)%"
-            $apiKey: "%env(GOOGLE_API_KEY)%"
+            $baseUrl: "%env(FINNHUB_BASE_URL)%"
+            $apiKey: "%env(FINNHUB_API_KEY)%"
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

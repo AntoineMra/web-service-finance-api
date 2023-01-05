@@ -20,21 +20,22 @@ class GoogleSearchService
         $this->apiKey = $apiKey;
     }
     
-    public function executeSearchService(string $body): string
+    public function executeSearchService(): string
     {
         $options = [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
-                // Add API KEY + Query Params ?
             ],
             'query' => [
-                'token' => '...',
-                'name' => '...',
+                'keyword' => "cruise",
+                'location' => "-33.8670522%2C151.1957362",
+                'radius' => "1500",
+                'type' => "restaurant",
+                'key' => $this->apiKey
             ],
         ];
-        // Add %env(url) get env ? sinon parametrer un argument dans serivce.yml
-        $response = $this->client->request('GET', $baseUrl.'', $options);
+        $response = $this->client->request('GET', $this->baseUrl.'/nearbysearch/json', $options);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             $this->logger->error($response->getStatusCode());

@@ -13,6 +13,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     operations: [
         new Get(),
+        new Get(
+            name: 'transactions',
+            uriTemplate: '/budgets/{id}/transactions',
+            normalizationContext: ['groups' => ['budget_transactions:read']],
+            denormalizationContext: ['groups' => ['budget_transactions:write']]
+        ),
         new GetCollection(),
     ],
     normalizationContext: ['groups' => ['stocks:read']],

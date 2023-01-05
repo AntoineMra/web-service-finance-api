@@ -23,6 +23,12 @@ use Doctrine\Common\Collections\ArrayCollection;
         new Get(),
         new Put(),
         new Delete(),
+        new Get(
+            name: 'transactions',
+            uriTemplate: '/budgets/{id}/transactions',
+            normalizationContext: ['groups' => ['budget_transactions:read']],
+            denormalizationContext: ['groups' => ['budget_transactions:write']]
+        ),
         new GetCollection(),
         new Post(),
     ],

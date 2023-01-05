@@ -5,7 +5,7 @@ namespace App\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class StockSearchService
+class StocksSearchService
 {
     private $baseUrl;
     private $apiKey;
