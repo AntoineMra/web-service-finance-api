@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\LocationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LocationRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: LocationRepository::class)]
 class Location
@@ -14,9 +15,11 @@ class Location
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['company:read', 'company:write', 'user:read', 'user:write'])]
     private ?float $lat = null;
 
     #[ORM\Column]
+    #[Groups(['company:read', 'company:write', 'user:read', 'user:write'])]
     private ?float $long = null;
 
     #[ORM\OneToOne(mappedBy: 'location', cascade: ['persist', 'remove'])]

@@ -2,13 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+        new Post(
+            security: "is_granted('ROLE_ADMIN')"
+        ),
+    ],
+    normalizationContext: ['groups' => ['user:read']],
+    denormalizationContext: ['groups' => ['user:write']]
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -17,18 +33,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['user:read', 'user:write'])]
     private ?string $username = null;
 
     #[ORM\Column]
+    #[Groups(['user:read', 'user:write'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups('user:write')]
     private ?string $password = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(['user:read', 'user:write'])]
     private ?Location $location = null;
 
     public function getId(): ?int
