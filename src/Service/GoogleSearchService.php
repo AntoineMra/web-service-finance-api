@@ -7,10 +7,17 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GoogleSearchService
 {
+    private $baseUrl;
+    private $apiKey;
+
     public function __construct(
         private readonly HttpClientInterface $client,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        string $baseUrl,
+        string $apiKey
     ) {
+        $this->baseUrl = $baseUrl;
+        $this->apiKey = $apiKey;
     }
     
     public function executeSearchService(string $body): string
@@ -27,7 +34,7 @@ class GoogleSearchService
             ],
         ];
         // Add %env(url) get env ? sinon parametrer un argument dans serivce.yml
-        $response = $this->client->request('POST', self::PATH_EXECUTE_DECISION_SERVICE, $options);
+        $response = $this->client->request('GET', $baseUrl.'', $options);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             $this->logger->error($response->getStatusCode());

@@ -4,16 +4,16 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\StocksRepository;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StocksRepository::class)]
 #[ApiResource(
     operations: [
         new Get(),
-        new Put(),
-        new GetCollection(
-            controller: GetStockNearby::class, 
-        ),
+        new GetCollection(),
     ],
     normalizationContext: ['groups' => ['stocks:read']],
     denormalizationContext: ['groups' => ['stocks:write']]

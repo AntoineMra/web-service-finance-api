@@ -1,0 +1,6 @@
+App\Entity\Stocks:
+  budget_{1..10}:
+    name: "Stock <current()>"
+    symbol: <currencyCode()>
+    url: <url()>
+    isAcknowledged: false
