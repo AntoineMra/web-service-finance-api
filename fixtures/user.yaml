@@ -1,12 +1,11 @@
-App\Entity\Users:
+App\Entity\User:
   users_{1..9}:
     username: "Test<current()>"
     roles: ["ROLE_USER"]
-    password: <hash('testing')>
+    password: <hashPassword('testing')>
     location: "@location_<current()>"
 
   users_10:
-    username: "Test<current()>"
+    username: "TestAdmin"
     roles: ["ROLE_USER", "ROLE_ADMIN"]
-    password: <hash('testing')>
-    location: "@location_10>"
+    password: <hashPassword('testing')>

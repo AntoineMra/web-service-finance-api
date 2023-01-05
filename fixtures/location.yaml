@@ -1,4 +1,4 @@
 App\Entity\Location:
-  users_{1..10}:
+  location_{1..10}:
     lat: 48.866667
     long: 2.333333

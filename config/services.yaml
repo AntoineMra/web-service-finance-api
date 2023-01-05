@@ -30,5 +30,12 @@ services:
             $baseUrl: "%env(FINNHUB_BASE_URL)%"
             $apiKey: "%env(FINNHUB_API_KEY)%"
 
+    App\OpenApi\JwtDecorator:
+        decorates: "api_platform.openapi.factory"
+        arguments: ["@.inner"]
+
+    App\DataFixtures\Provider\HashPasswordProvider:
+        tags: [{ name: nelmio_alice.faker.provider }]
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

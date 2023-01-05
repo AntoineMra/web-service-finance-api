@@ -16,10 +16,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ApiResource(
     operations: [
         new GetCollection(
-            security: "is_granted('ROLE_ADMIN')"
+            //security: "is_granted('ROLE_ADMIN')"
         ),
         new Post(
-            security: "is_granted('ROLE_ADMIN')"
+            //security: "is_granted('ROLE_ADMIN')"
         ),
     ],
     normalizationContext: ['groups' => ['user:read']],
