@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\Post;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
@@ -16,11 +18,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ApiResource(
     operations: [
         new GetCollection(
-            //security: "is_granted('ROLE_ADMIN')"
+            security: "is_granted('ROLE_ADMIN')"
         ),
-        new Post(
-            //security: "is_granted('ROLE_ADMIN')"
-        ),
+        new Post(),
     ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']]
@@ -50,6 +50,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[Groups(['user:read', 'user:write'])]
     private ?Location $location = null;
+
+    #[ORM\ManyToMany(targetEntity: Stocks::class, inversedBy: 'users')]
+    private Collection $stocks;
+
+    #[ORM\ManyToMany(targetEntity: Companies::class, inversedBy: 'users')]
+    private Collection $companies;
+
+    public function __construct()
+    {
+        $this->stocks = new ArrayCollection();
+        $this->companies = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -129,6 +141,54 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLocation(?Location $location): self
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Stocks>
+     */
+    public function getStocks(): Collection
+    {
+        return $this->stocks;
+    }
+
+    public function addStock(Stocks $stock): self
+    {
+        if (!$this->stocks->contains($stock)) {
+            $this->stocks->add($stock);
+        }
+
+        return $this;
+    }
+
+    public function removeStock(Stocks $stock): self
+    {
+        $this->stocks->removeElement($stock);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Companies>
+     */
+    public function getCompanies(): Collection
+    {
+        return $this->companies;
+    }
+
+    public function addCompany(Companies $company): self
+    {
+        if (!$this->companies->contains($company)) {
+            $this->companies->add($company);
+        }
+
+        return $this;
+    }
+
+    public function removeCompany(Companies $company): self
+    {
+        $this->companies->removeElement($company);
 
         return $this;
     }

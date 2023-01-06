@@ -2,24 +2,24 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\StocksRepository;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\StocksRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Controller\GetStocks;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StocksRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(),
-        new Get(
-            name: 'transactions',
-            uriTemplate: '/budgets/{id}/transactions',
-            normalizationContext: ['groups' => ['budget_transactions:read']],
-            denormalizationContext: ['groups' => ['budget_transactions:write']]
+        new GetCollection(
+            name: 'newStocks',
+            controller: GetStocks::class,
+            read: false
         ),
-        new GetCollection(),
     ],
     normalizationContext: ['groups' => ['stocks:read']],
     denormalizationContext: ['groups' => ['stocks:write']]
@@ -46,6 +46,14 @@ class Stocks
     #[ORM\Column]
     #[Groups('stocks:read')]
     private ?bool $isAcknowledged = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'stocks')]
+    private Collection $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,6 +104,33 @@ class Stocks
     public function setIsAcknowledged(bool $isAcknowledged): self
     {
         $this->isAcknowledged = $isAcknowledged;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addStock($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeStock($this);
+        }
 
         return $this;
     }

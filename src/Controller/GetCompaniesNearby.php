@@ -1,15 +1,17 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Stocks;
 use Psr\Log\LoggerInterface;
 use App\Service\GoogleSearchService;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 #[AsController]
-class GetStockNearby extends AbstractController
+class GetCompaniesNearby extends AbstractController
 {
     private $logger;
     private $googleSearchService;
@@ -20,13 +22,12 @@ class GetStockNearby extends AbstractController
         $this->googleSearchService = $googleSearchService;
     }
 
-    public function __invoke(Request $request): Response
+    public function __invoke(): ResponseInterface
     {
         $this->logger->warning('Passed to logger');
-        $this->logger->info($request);
-        
+
         // Google Search Parameters attended in the request must be passed in the service
 
-        return $this->googleSearchService->getHappyMessage(); // Should Return a Response Object + Change name function
+        return $this->googleSearchService->executeSearchService(); // Should Return a Response Object + Change name function
     }
 }

@@ -16,6 +16,7 @@ use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: BudgetRepository::class)]
 #[ApiResource(
@@ -24,7 +25,7 @@ use Doctrine\Common\Collections\ArrayCollection;
         new Put(),
         new Delete(),
         new Get(
-            name: 'transactions',
+            name: 'subtransactions',
             uriTemplate: '/budgets/{id}/transactions',
             normalizationContext: ['groups' => ['budget_transactions:read']],
             denormalizationContext: ['groups' => ['budget_transactions:write']]
@@ -47,7 +48,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Groups(['budget:read', 'budget:write'])]
-    private ?\DateTimeInterface $date = null;
+    private ?string $date = null;
 
     #[ORM\Column(length: 255, enumType: BudgetStatus::class, nullable: true)]
     #[Groups(['budget:read', 'budget:write'])]
@@ -88,9 +89,9 @@ use Doctrine\Common\Collections\ArrayCollection;
         return $this;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?string
     {
-        return date_format($this->date, "mmYY");
+        return $this->date;
     }
 
     public function setDate(\DateTimeInterface $date): self

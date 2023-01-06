@@ -3,9 +3,11 @@
 namespace App\Service;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class StocksSearchService
+class StocksSearchService implements StocksSearchServiceInterface
 {
     private $baseUrl;
     private $apiKey;
@@ -19,8 +21,8 @@ class StocksSearchService
         $this->baseUrl = $baseUrl;
         $this->apiKey = $apiKey;
     }
-    
-    public function companySearchService(string $body): string
+
+    public function companySearchService(string $body): ResponseInterface
     {
         $options = [
             'headers' => [
@@ -33,25 +35,25 @@ class StocksSearchService
                 'name' => '...',
             ],
         ];
-        $response = $this->client->request('GET', $baseUrl.'/', $options);
+        $response = $this->client->request('GET', $this->baseUrl . '/', $options);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             $this->logger->error($response->getStatusCode());
         }
 
         if (!str_contains($response->getHeaders()['content-type'][0], 'application/json')) {
-             $this->logger->error('Wrong content type');
+            $this->logger->error('Wrong content type');
         }
 
         $content = $response->getContent();
         if ($content === '') {
-             $this->logger->error('Content is empty');
+            $this->logger->error('Content is empty');
         }
 
-        return $content;
+        return $response;
     }
 
-        public function stocksSearchService(string $body): string
+    public function stocksSearchService(string $body): ResponseInterface
     {
         $options = [
             'headers' => [
@@ -65,21 +67,21 @@ class StocksSearchService
             ],
         ];
         // Add %env(url) get env ? sinon parametrer un argument dans serivce.yml
-        $response = $this->client->request('POST', self::PATH_EXECUTE_DECISION_SERVICE, $options);
+        $response = $this->client->request('POST', $this->baseUrl, $options);
 
         if ($response->getStatusCode() !== Response::HTTP_OK) {
             $this->logger->error($response->getStatusCode());
         }
 
         if (!str_contains($response->getHeaders()['content-type'][0], 'application/json')) {
-             $this->logger->error('Wrong content type');
+            $this->logger->error('Wrong content type');
         }
 
         $content = $response->getContent();
         if ($content === '') {
-             $this->logger->error('Content is empty');
+            $this->logger->error('Content is empty');
         }
 
-        return $content;
+        return $response;
     }
 }

@@ -6,19 +6,22 @@ use ApiPlatform\Metadata\Get;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use App\Controller\GetCompaniesNearby;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CompaniesRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CompaniesRepository::class)]
 #[ApiResource(
     operations: [
         new Get(),
-        new Get(
-            name: 'transactions',
-            uriTemplate: '/budgets/{id}/transactions',
+        new GetCollection(
+            name: 'nearbyCompanies',
+            controller: GetCompaniesNearby::class,
+            read: false
         ),
-        new GetCollection(),
     ],
     normalizationContext: ['groups' => ['company:read']],
     denormalizationContext: ['groups' => ['company:write']]
@@ -34,13 +37,21 @@ class Companies
     #[Groups(['company:read', 'company:write'])]
     private ?string $name = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::JSON)]
     #[Groups(['company:read', 'company:write'])]
     private array $types = [];
 
     #[ORM\OneToOne(inversedBy: 'companies', cascade: ['persist', 'remove'])]
     #[Groups(['company:read', 'company:write'])]
     private ?Location $location = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'companies')]
+    private Collection $users;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -79,6 +90,33 @@ class Companies
     public function setLocation(?Location $location): self
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addCompany($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeCompany($this);
+        }
 
         return $this;
     }

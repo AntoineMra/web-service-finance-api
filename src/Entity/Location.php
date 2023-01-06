@@ -75,4 +75,10 @@ class Location
 
         return $this;
     }
+
+    #[Groups(['company:read', 'company:write', 'user:read', 'user:write'])]
+    public function getFullLocation(): string
+    {
+        return __toString($this->long) . __toString($this->lat);
+    }
 }
