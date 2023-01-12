@@ -25,6 +25,12 @@ class Location
     #[ORM\OneToOne(mappedBy: 'location', cascade: ['persist', 'remove'])]
     private ?Companies $companies = null;
 
+    public function __construct($lat = 0, $long = 0)
+    {
+        $this->lat = $lat;
+        $this->long = $long;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -79,6 +85,6 @@ class Location
     #[Groups(['company:read', 'company:write', 'user:read', 'user:write'])]
     public function getFullLocation(): string
     {
-        return __toString($this->long) . __toString($this->lat);
+        return strval($this->long) . ', ' . strval($this->lat);
     }
 }

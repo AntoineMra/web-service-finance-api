@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CompaniesRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping\Id;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CompaniesRepository::class)]
@@ -50,6 +51,7 @@ class Companies
 
     public function __construct()
     {
+        $this->id = $id ?? random_int(300, 90000);
         $this->users = new ArrayCollection();
     }
 
