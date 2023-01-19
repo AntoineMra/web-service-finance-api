@@ -6,13 +6,14 @@ use App\Entity\Stocks;
 use App\Entity\Location;
 use App\Entity\Companies;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Uid\Uuid;
 use App\Service\GoogleSearchService;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 
 #[AsController]
 class GetCompaniesNearby extends AbstractController
@@ -47,7 +48,7 @@ class GetCompaniesNearby extends AbstractController
 
 
         foreach ($places as $place) {
-            $companies = new Companies();
+            $companies = new Companies(Uuid::v6());
             $companies->addUser($this->security->getUser());
             $companies->setName($place['name']);
             $companies->setTypes($place['types']);

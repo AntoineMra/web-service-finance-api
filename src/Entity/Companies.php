@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Controller\GetCompaniesNearby;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CompaniesRepository;
-use ApiPlatform\Api\UrlGeneratorInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
@@ -57,7 +56,8 @@ class Companies
 {
     #[ORM\Id]
     #[ORM\Column(type: 'uuid', unique: true)]
-    private ?Uuid $id;
+    #[Groups('company:read')]
+    private Uuid $id;
 
     #[ORM\Column(length: 255)]
     #[Groups(['company:read', 'company:write'])]
@@ -74,13 +74,13 @@ class Companies
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'companies')]
     private Collection $users;
 
-    public function __construct()
+    public function __construct($id = null)
     {
         $this->id = $id ?? Uuid::v6();
         $this->users = new ArrayCollection();
     }
 
-    public function getId(): ?Uuid
+    public function getId(): Uuid
     {
         return $this->id;
     }
