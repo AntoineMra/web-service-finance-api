@@ -2,17 +2,18 @@
 
 namespace App\Entity;
 
-use App\Repository\TransactionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TransactionRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
 class Transaction
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
     #[Groups(['budget:read', 'budget:write'])]
@@ -34,7 +35,12 @@ class Transaction
     #[ORM\JoinColumn(nullable: false)]
     private ?Budget $budget = null;
 
-    public function getId(): ?int
+    public function __construct()
+    {
+        $this->id = $id ?? Uuid::v6();
+    }
+
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

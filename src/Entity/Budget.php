@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Uid\Uuid;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Enum\BudgetStatus;
@@ -34,13 +35,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(),
     ],
     normalizationContext: ['groups' => ['budget:read']],
-    denormalizationContext: ['groups' => ['budget:write']]
 )] class Budget
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
     #[Groups(['budget:read', 'budget:write'])]
@@ -69,10 +68,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
     public function __construct()
     {
+        $this->id = $id ?? Uuid::v6();
         $this->transactions = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

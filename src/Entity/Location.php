@@ -5,14 +5,14 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\LocationRepository;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: LocationRepository::class)]
 class Location
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private ?Uuid $id;
 
     #[ORM\Column]
     #[Groups(['company:read', 'company:write', 'user:read', 'user:write'])]
@@ -27,11 +27,12 @@ class Location
 
     public function __construct($lat = 0, $long = 0)
     {
+        $this->id = $id ?? Uuid::v6();
         $this->lat = $lat;
         $this->long = $long;
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

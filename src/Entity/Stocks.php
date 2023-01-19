@@ -11,6 +11,7 @@ use App\Controller\GetStocks;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: StocksRepository::class)]
 #[ApiResource(
@@ -27,9 +28,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Stocks
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
     #[Groups('stocks:read')]
@@ -52,10 +52,11 @@ class Stocks
 
     public function __construct()
     {
+        $this->id = $id ?? Uuid::v6();
         $this->users = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

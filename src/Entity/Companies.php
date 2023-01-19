@@ -3,36 +3,61 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Uid\Uuid;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Controller\GetCompaniesNearby;
 use ApiPlatform\Metadata\GetCollection;
 use App\Repository\CompaniesRepository;
+use ApiPlatform\Api\UrlGeneratorInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Mapping\Id;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CompaniesRepository::class)]
 #[ApiResource(
     operations: [
         new Get(),
-        new GetCollection(
+        new GetCollection(),
+        new Post(
             name: 'nearbyCompanies',
             controller: GetCompaniesNearby::class,
+            openapiContext: [
+                'summary' => 'Create companies nearby',
+                'requestBody' => [
+                    'content' => [
+                        'application/json' => [
+                            'schema' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'long' => ['type' => 'float'],
+                                    'lat' => ['type' => 'float']
+                                ]
+                            ],
+                            'example' => [
+                                'long' => '151.2100055',
+                                'lat' => '-33.8587323'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             read: false
         ),
     ],
     normalizationContext: ['groups' => ['company:read']],
-    denormalizationContext: ['groups' => ['company:write']]
+    denormalizationContext: ['groups' => ['company:write']],
 )]
+#[ApiFilter(SearchFilter::class, properties: ['types' => 'partial'])]
 class Companies
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private ?Uuid $id;
 
     #[ORM\Column(length: 255)]
     #[Groups(['company:read', 'company:write'])]
@@ -51,11 +76,11 @@ class Companies
 
     public function __construct()
     {
-        $this->id = $id ?? random_int(300, 90000);
+        $this->id = $id ?? Uuid::v6();
         $this->users = new ArrayCollection();
     }
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }

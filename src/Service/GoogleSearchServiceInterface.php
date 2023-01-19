@@ -7,5 +7,5 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 interface GoogleSearchServiceInterface
 {
-    public function executeSearchService(): ResponseInterface;
+    public function executeSearchService(float $long, float $lat): ResponseInterface;
 }

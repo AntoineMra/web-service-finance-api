@@ -24,6 +24,6 @@ class GetStocks extends AbstractController
     public function __invoke(Request $request): ResponseInterface
     {
 
-        return $this->googleSearchService->executeSearchService(); // Should Return a Response Object + Change name function
+        return $this->googleSearchService->executeSearchService(1, 1); // Should Return a Response Object + Change name function
     }
 }

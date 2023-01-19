@@ -23,7 +23,7 @@ class GoogleSearchService implements GoogleSearchServiceInterface
         $this->apiKey = $apiKey;
     }
 
-    public function executeSearchService(): ResponseInterface
+    public function executeSearchService(float $long, float $lat): ResponseInterface
     {
         $options = [
             'headers' => [
@@ -31,10 +31,8 @@ class GoogleSearchService implements GoogleSearchServiceInterface
                 'Accept' => 'application/json',
             ],
             'query' => [
-                'keyword' => "cruise",
-                'location' => "-33.8670522,151.1957362",
+                'location' => sprintf("%s,%s", $lat, $long),
                 'radius' => "1500",
-                'type' => "restaurant",
                 'key' => $this->apiKey
             ],
         ];
