@@ -2,11 +2,11 @@
 
 namespace App\OpenApi;
 
-use ApiPlatform\Core\OpenApi\Factory\OpenApiFactoryInterface;
-use ApiPlatform\Core\OpenApi\Model;
-use ApiPlatform\Core\OpenApi\OpenApi;
+use ApiPlatform\OpenApi\Model;
+use ApiPlatform\OpenApi\OpenApi;
+use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 
-class UserDecorator implements OpenApiFactoryInterface
+class WhoAmiDecorator implements OpenApiFactoryInterface
 {
     public function __construct(
         private OpenApiFactoryInterface $decorated
@@ -38,8 +38,7 @@ class UserDecorator implements OpenApiFactoryInterface
                     '200' => [
                         'description' => 'User informations',
                         'content' => [
-                            'application/json' => [
-                            ],
+                            'application/json' => [],
                         ],
                     ],
                     '401' => [
@@ -53,6 +52,6 @@ class UserDecorator implements OpenApiFactoryInterface
             ),
         );
 
-        $openApi->getPaths()->addPath('/whoami', $pathItem);
+        $openApi->getPaths()->addPath('/api/whoami', $pathItem);
     }
 }

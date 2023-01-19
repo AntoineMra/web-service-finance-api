@@ -12,12 +12,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[AsController]
 class WhoAmiController extends AbstractController
 {
-    #[Route('/whoami', name: 'whoami', methods: ['GET'])]
+    #[Route('/api/whoami', name: 'whoami', methods: ['GET'])]
     public function __invoke(SerializerInterface $serializer): ?JsonResponse
     {
         $user = $this->getUser();
 
-        if (!$user instanceof AbstractUser) {
+        if (!$user instanceof User) {
             return new JsonResponse(['message' => 'Invalid user type'], 401);
         }
 
