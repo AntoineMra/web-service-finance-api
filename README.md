@@ -3,7 +3,7 @@
 Le projet consiste à réaliser une api qui recommande à l’utilisateur les entreprises côté en bourse à proximité. D’une part l’obtention des entreprise de proximité sera obtenu à travers l’API Google Maps et d’autre part l’API Yahoo Finance se charge de fournir les informations du titre boursiers lié à l’entreprise.
 
 <aside>
-📌 API Platform Custom API | API Google Maps | API Yahoo Finance
+📌 API Platform Custom API | API Google Maps | API Finnhub Finance
 </aside>
 
 ## Getting Started
