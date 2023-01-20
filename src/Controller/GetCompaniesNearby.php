@@ -44,7 +44,7 @@ class GetCompaniesNearby extends AbstractController
         $places = $response->toArray()['results'];
 
         $collection = new ArrayCollection();
-        $this->logger->warning($response->getContent());
+        $this->logger->debug($response->getContent());
 
 
         foreach ($places as $place) {
